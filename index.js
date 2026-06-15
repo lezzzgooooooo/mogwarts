@@ -516,7 +516,50 @@ error:e.message
 });
 
 
+app.get("/followers/:user_id", async (req, res) => {
+  try {
+    const { user_id } = req.params;
 
+    const data = await db(
+      `/followers?select=*&following_id=eq.${encodeURIComponent(user_id)}`
+    );
+
+    res.json(data);
+
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get("/following/:user_id", async (req, res) => {
+  try {
+    const { user_id } = req.params;
+
+    const data = await db(
+      `/followers?select=*&follower_id=eq.${encodeURIComponent(user_id)}`
+    );
+
+    res.json(data);
+
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+app.get("/ratings/:user_id", async (req, res) => {
+  try {
+    const { user_id } = req.params;
+
+    const data = await db(
+      `/ratings?select=*&rated_user_id=eq.${encodeURIComponent(user_id)}`
+    );
+
+    res.json(data);
+
+  } catch (e) {
+    res.status(500).json({ error: e.message });
+  }
+});
 
 
 
