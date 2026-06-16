@@ -551,6 +551,90 @@ app.get("/ratings/:user_id", async (req, res) => {
 
 const PORT=process.env.PORT||3000;
 
+// CREATE COMMENT
+
+app.post("/comment", async(req,res)=>{
+
+
+try{
+
+
+let {
+
+profile_id,
+
+commenter_id,
+
+text
+
+}=req.body;
+
+
+
+let now = new Date();
+
+let expire = new Date(
+now.getTime() + 24 * 60 * 60 * 1000
+);
+
+
+
+await db("/comments",
+
+{
+
+method:"POST",
+
+headers:{
+
+Prefer:
+"resolution=merge-duplicates"
+
+},
+
+body:JSON.stringify({
+
+profile_id,
+
+commenter_id,
+
+text,
+
+created_at:now,
+
+expires_at:expire
+
+})
+
+}
+
+);
+
+
+
+res.json({
+
+success:true
+
+});
+
+
+}catch(e){
+
+
+res.status(500).json({
+
+error:e.message
+
+});
+
+
+}
+
+
+});
+
+
 app.post("/report", async(req,res)=>{
 
 
