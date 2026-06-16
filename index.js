@@ -531,20 +531,6 @@ app.get("/followers/:user_id", async (req, res) => {
   }
 });
 
-app.get("/following/:user_id", async (req, res) => {
-  try {
-    const { user_id } = req.params;
-
-    const data = await db(
-      `/followers?select=*&follower_id=eq.${encodeURIComponent(user_id)}`
-    );
-
-    res.json(data);
-
-  } catch (e) {
-    res.status(500).json({ error: e.message });
-  }
-});
 
 app.get("/ratings/:user_id", async (req, res) => {
   try {
@@ -565,6 +551,120 @@ app.get("/ratings/:user_id", async (req, res) => {
 
 const PORT=process.env.PORT||3000;
 
+app.post("/report", async(req,res)=>{
+
+
+try{
+
+
+let {
+
+reported_id,
+
+reported_user_id,
+
+reason
+
+}=req.body;
+
+
+
+await db("/reports",
+
+{
+
+method:"POST",
+
+headers:{
+
+Prefer:
+"resolution=merge-duplicates"
+
+},
+
+body:JSON.stringify({
+
+reported_id,
+
+reported_user_id,
+
+reason,
+
+created_at:new Date()
+
+})
+
+}
+
+);
+
+
+
+res.json({
+
+success:true
+
+});
+
+
+
+}catch(e){
+
+
+res.status(500).json({
+
+error:e.message
+
+});
+
+
+}
+
+
+});
+
+
+
+
+
+// GET REPORTS FOR USER
+
+app.get("/reports/:user_id", async(req,res)=>{
+
+
+try{
+
+
+const { user_id } = req.params;
+
+
+
+let data = await db(
+
+`/reports?select=*&reported_user_id=eq.${encodeURIComponent(user_id)}`
+
+);
+
+
+
+res.json(data);
+
+
+
+}catch(e){
+
+
+res.status(500).json({
+
+error:e.message
+
+});
+
+
+}
+
+
+});
 
 app.listen(PORT,()=>{
 
